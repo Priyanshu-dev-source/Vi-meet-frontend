@@ -1,7 +1,8 @@
 import React from "react";
+import Profile from "../ui/profile"
 import { useNavigate } from 'react-router-dom';
 
-export default function NavbarComponent({ loginCard }) {
+export default function NavbarComponent({ loginCard, isLoggedIn }) {
 
   const navigate = useNavigate();
 
@@ -10,8 +11,8 @@ export default function NavbarComponent({ loginCard }) {
   };
 
   const handleLogin = () =>{
-    loginCard()
     navigate('/login')
+    loginCard()
   }
 
   return (
@@ -47,9 +48,10 @@ export default function NavbarComponent({ loginCard }) {
           <button className="navbar-login-button" onClick={handleLogin}>
             Login
           </button>
-          <button onClick={handleClick} style={{width:'100px'}} className="navbar-login-button">
+          <button className="navbar-join-button" onClick={handleClick}>
             Join Meet
             </button>
+            {isLoggedIn && <Profile></Profile>}
         </div>
       </div>
     </>

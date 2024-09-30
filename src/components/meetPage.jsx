@@ -38,6 +38,29 @@ export default function MeetPage() {
   const [videoSvg, setVideoSvg] = useState("videoOn");
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/user", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserName(data.user.name);
+        } else {
+          console.log("User not authenticated");
+        }
+      } catch (error) {
+        console.log("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleMicSvg = () => {
     setMicSvg(micSvg === "micOff" ? "micOn" : "micOff");
@@ -66,10 +89,10 @@ export default function MeetPage() {
           </div>
           <div className="meet-page-info-side-page-meet-button">
             <button>New Meet</button>
-            <input type="text" placeholder="Enter name" />
+            <input type="text" placeholder="Enter name" value={userName} onChange={(e)=>{setUserName(e.target)}}></input>
           </div>
           <div className="meet-page-info-side-page-meet-code-join">
-            <input type="text" placeholder="Enter code" />
+            <input type="text" placeholder="Enter code"/>
           </div>
           <div className="meet-page-info-side-page-join-button">
             <button>

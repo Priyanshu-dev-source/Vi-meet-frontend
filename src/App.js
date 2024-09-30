@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarComponent from "./components/navbar";
 import LandingPage from "./components/landingPage";
 import LoginAuth from "./components/loginAuth";
-import SignUpAuth from './components/signUpAuth';
+import SignUpAuth from "./components/signUpAuth";
 import MeetPage from "./components/meetPage";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,22 +12,24 @@ function App() {
   const [fillUp, setFillUp] = useState("blur(0px)");
   const [flexDisp, setFlexDisp] = useState("none");
   const [signDisp, setSignDisp] = useState("none");
-  const loginCardPop = () =>{
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const loginCardPop = () => {
     setFillUp("blur(4px)");
     setFlexDisp("flex");
   };
-  const closeLoginCard = () =>{
+  const closeLoginCard = () => {
     setFlexDisp("none");
     setSignDisp("none");
     setFillUp("blur(0px)");
   };
-  const signUpPop = () =>{
+  const signUpPop = () => {
     closeLoginCard();
     setSignDisp("flex");
     setFillUp("blur(4px)");
-  }
-  const handleSuccess = (message) =>{
-    setFillUp("blur(0px)")
+  };
+  const handleSuccess = (message) => {
+    setFillUp("blur(0px)");
     toast.success(message, {
       position: "bottom-right",
       autoClose: 3000,
@@ -38,9 +40,9 @@ function App() {
       progress: undefined,
       theme: "light",
       transition: Bounce,
-      });
-  }
-  const handleError = (message) =>{
+    });
+  };
+  const handleError = (message) => {
     toast.error(message, {
       position: "bottom-right",
       autoClose: 2000,
@@ -51,15 +53,15 @@ function App() {
       progress: undefined,
       theme: "light",
       transition: Bounce,
-      });
-  }
+    });
+  };
   return (
     <Router>
       <div className="main-body-wrapper" style={{ filter: fillUp }}>
         <div className="navbar-component-wrapper">
-          <NavbarComponent loginCard={loginCardPop} />
+          <NavbarComponent loginCard={loginCardPop} isLoggedIn={isLoggedIn} />
         </div>
-        
+
         <div className="landing-home-page">
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -69,15 +71,42 @@ function App() {
       </div>
       <div className="login-auth-page-wrapper" style={{ display: flexDisp }}>
         <Routes>
-          <Route path="/login" element={<LoginAuth onClickButton={closeLoginCard} signButton={signUpPop}  onUserLoggedIn={(successMessage)=>handleSuccess("Login succesful")} onPasswordError={(errorMessage)=>handleError("Invalid Username or Password")}></LoginAuth>}/>
+          <Route
+            path="/login"
+            element={
+              <LoginAuth
+                onClickButton={closeLoginCard}
+                signButton={signUpPop}
+                onUserLoggedIn={(successMessage) =>
+                  handleSuccess("Login succesful" , setIsLoggedIn(true))
+                }
+                onPasswordError={(errorMessage) =>
+                  handleError("Invalid Username or Password")
+                }
+              ></LoginAuth>
+            }
+          />
         </Routes>
       </div>
       <div className="login-auth-page-wrapper" style={{ display: signDisp }}>
         <Routes>
-          <Route path="/signup" element={<SignUpAuth onClickButton={closeLoginCard} onUserCreated={(successMessage)=>handleSuccess("Signed up successfully")} onUserNotCreated={(errorMessage)=>handleError("Email already exixts")}></SignUpAuth>}/>
+          <Route
+            path="/signup"
+            element={
+              <SignUpAuth
+                onClickButton={closeLoginCard}
+                onUserCreated={(successMessage) =>
+                  handleSuccess("Signed up successfully")
+                }
+                onUserNotCreated={(errorMessage) =>
+                  handleError("Email already exixts")
+                }
+              ></SignUpAuth>
+            }
+          />
         </Routes>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </Router>
   );
 }

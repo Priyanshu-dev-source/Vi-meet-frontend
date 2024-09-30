@@ -12,14 +12,20 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
   const handleLogin=(e)=>{
     e.preventDefault()
     axios
-        .post("http://localhost:3001/login", {email, password})
+        .post("http://localhost:3001/login", {email, password}, {withCredentials:true})
         .then((result)=>{
             if(result.data==="Success"){
                 navigate("/meet")
+                axios.post("http://localhost:3001/user", {withCredentials:true})
+                .then(response=>{
+                  if(response.data.user){
+                    navigate("/meet", {state:{ user: response.data.user}})
+                  }
+                })
                 onUserLoggedIn()
             }
-            else if(result.status === 401){
-                onPasswordError()
+            else{
+              onPasswordError()
             }
         })
         .catch(err => console.log(err))
@@ -62,6 +68,7 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
               placeholder="Email"
               className="login-auth-body-email"
               name="email"
+              autoComplete="off"
             />
             <input
               type="password"
@@ -69,6 +76,7 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
               className="login-auth-body-email"
               name="password"
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="off"
             />
             <button className="login-auth-body-button-login">LOGIN</button>
           </form>

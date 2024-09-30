@@ -20,8 +20,7 @@ export default function SignUpAuth({ onClickButton, onUserCreated, onUserNotCrea
       .post("http://localhost:3001/signup", { name, email, password })
       .then((result) => {
         if (result.status === 201) {
-            onUserCreated()
-          console.log("User successfully created");
+          onUserCreated()
           navigate("/")
         }
       })
