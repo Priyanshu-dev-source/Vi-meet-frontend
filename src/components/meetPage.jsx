@@ -43,7 +43,7 @@ export default function MeetPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/user", {
+        const response = await fetch("https://vi-meet.onrender.com/user", {
           method: "GET",
           credentials: "include",
         });
@@ -89,7 +89,7 @@ export default function MeetPage() {
           </div>
           <div className="meet-page-info-side-page-meet-button">
             <button>New Meet</button>
-            <input type="text" placeholder="Enter name" value={userName} onChange={(e)=>{setUserName(e.target)}}></input>
+            <input type="text" placeholder="Enter name" value={userName} onChange={(e)=>{setUserName(e.target.value)}}></input>
           </div>
           <div className="meet-page-info-side-page-meet-code-join">
             <input type="text" placeholder="Enter code"/>

@@ -8,7 +8,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/user", {
+        const response = await fetch("https://vi-meet-onrender.com/user", {
           method: "GET",
           credentials: "include",
         });
