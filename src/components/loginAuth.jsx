@@ -12,23 +12,26 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
   const handleLogin=(e)=>{
     e.preventDefault()
     axios
-        .post("https://vi-meet.onrender.com/login", {email, password}, {withCredentials:true})
+        .post("http://localhost:3001/login", {email, password}, {withCredentials:true})
         .then((result)=>{
             if(result.data==="Success"){
                 navigate("/meet")
-                axios.post("https://vi-meet.onrender.com/user", {withCredentials:true})
+                axios.post("http://localhost:3001/user", {withCredentials:true})
                 .then(response=>{
                   if(response.data.user){
                     navigate("/meet", {state:{ user: response.data.user}})
+                    console.log("Logged in successfully")
                   }
                 })
                 onUserLoggedIn()
-            }
-            else{
-              onPasswordError()
-            }
+              }
+              else{
+                console.log("Error in logging in");
+              }
+            })
+        .catch(err =>{
+          onPasswordError();
         })
-        .catch(err => console.log(err))
 
   }
 
