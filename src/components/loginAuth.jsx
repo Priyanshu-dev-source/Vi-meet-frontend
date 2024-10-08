@@ -12,7 +12,7 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
   const handleLogin=(e)=>{
     e.preventDefault()
     axios
-        .post("http://localhost:3001/login", {email, password}, {withCredentials:true})
+        .post("https://vi-meet.onrender.com/login", {email, password}, {withCredentials:true})
         .then((result)=>{
             if(result.data==="Success"){
                 navigate("/meet")
