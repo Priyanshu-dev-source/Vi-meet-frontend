@@ -13,7 +13,7 @@ const AudioComponent = ({ isAudioOn }) => {
           stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           setAudioStream(stream);
         } else if (audioStream) {
-          audioStream.getTracks().forEach(track => track.stop());
+          audioStream.getTracks().forEach((track) => track.stop());
           setAudioStream(null);
         }
       } catch (err) {
@@ -25,15 +25,13 @@ const AudioComponent = ({ isAudioOn }) => {
 
     return () => {
       if (audioStream) {
-        audioStream.getTracks().forEach(track => track.stop());
+        audioStream.getTracks().forEach((track) => track.stop());
       }
     };
   }, [isAudioOn, audioStream]);
-
 };
 
 export default function MeetPage() {
-
   const [micSvg, setMicSvg] = useState("micOn");
   const [videoSvg, setVideoSvg] = useState("videoOn");
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -43,15 +41,20 @@ export default function MeetPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/user", {
+        // const response = await fetch("http://localhost:3001/user", {
+        //   method: "POST",
+        //   credentials: "include",
+        // });
+
+        const response = await fetch("https://vi-meet.onrender.com/user", {
           method: "POST",
-          credentials: "include",
+          credentials: "include", // Include cookies in requests
         });
 
         if (response.ok) {
           const data = await response.json();
           setUserName(data.user.name);
-          console.log("Set success")
+          console.log("Set success");
         } else {
           console.log("User not authenticated");
         }
@@ -67,13 +70,13 @@ export default function MeetPage() {
     setMicSvg(micSvg === "micOff" ? "micOn" : "micOff");
     setIsAudioOn(!isAudioOn);
   };
-  
+
   const videoConstraints = {
     width: 691,
     height: 410,
     facingMode: "user",
   };
-  
+
   const handleVideoSvg = () => {
     setVideoSvg(videoSvg === "videoOff" ? "videoOn" : "videoOff");
     setIsCameraOn(isCameraOn === false ? true : false);
@@ -90,10 +93,17 @@ export default function MeetPage() {
           </div>
           <div className="meet-page-info-side-page-meet-button">
             <button>New Meet</button>
-            <input type="text" placeholder="Enter name" value={userName} onChange={(e)=>{setUserName(e.target.value)}}></input>
+            <input
+              type="text"
+              placeholder="Enter name"
+              value={userName}
+              onChange={(e) => {
+                setUserName(e.target.value);
+              }}
+            ></input>
           </div>
           <div className="meet-page-info-side-page-meet-code-join">
-            <input type="text" placeholder="Enter code"/>
+            <input type="text" placeholder="Enter code" />
           </div>
           <div className="meet-page-info-side-page-join-button">
             <button>
@@ -134,20 +144,28 @@ export default function MeetPage() {
         <div className="meet-page-view-side-page">
           <div className="meet-page-view-side-page-video-portal">
             <div className="meet-page-view-side-page-video-portal-space">
-              {isCameraOn && <Webcam
+              {isCameraOn && (
+                <Webcam
                   audio={false}
                   videoConstraints={videoConstraints}
                 ></Webcam>
-              }
+              )}
               <AudioComponent isAudioOn={isAudioOn}></AudioComponent>
             </div>
-            <div className="meet-page-view-side-page-video-portal-mic-video-button" style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'30px'}}>
+            <div
+              className="meet-page-view-side-page-video-portal-mic-video-button"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "30px",
+              }}
+            >
               {isAudioOn ? (
                 <div className="meet-page-view-side-page-video-portal-audio-bar">
                   <p>HEARING.....</p>
                 </div>
-
-              ):(
+              ) : (
                 <div className="meet-page-view-side-page-video-portal-audio-bar">
                   <p>MIC OFF</p>
                 </div>
@@ -222,7 +240,6 @@ export default function MeetPage() {
                   )}
                 </button>
               </div>
-
             </div>
           </div>
         </div>
