@@ -53,8 +53,8 @@ export default function MeetPage() {
 
         if (response.ok) {
           const data = await response.json();
-          setUserName(data.user.name);
-          console.log("Set success");
+          setUserName(data.user.email);
+          console.log("Set success", data.user.email);
         } else {
           console.log("User not authenticated");
         }
