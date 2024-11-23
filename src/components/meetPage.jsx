@@ -39,30 +39,49 @@ export default function MeetPage() {
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // const response = await fetch("http://localhost:3001/user", {
-        //   method: "POST",
-        //   credentials: "include",
-        // });
+    // const fetchUserData = async () => {
+    //   try {
+    //     // const response = await fetch("http://localhost:3001/user", {
+    //     //   method: "POST",
+    //     //   credentials: "include",
+    //     // });
 
-        const response = await fetch("https://vi-meet.onrender.com/user", {
-          method: "POST",
-          credentials: "include", // Include cookies in requests
+    //     const response = await fetch("https://vi-meet.onrender.com/user", {
+    //       method: "POST",
+    //       credentials: "include", // Include cookies in requests
+    //     });
+
+    //     if (response.ok) {
+    //       const data = await response.json();
+    //       setUserName(data.user.email);
+    //       console.log("Set success", data.user.email);
+    //     } else {
+    //       console.log("User not authenticated");
+    //     }
+    //   } catch (error) {
+    //     console.log("Error fetching user data:", error);
+    //   }
+    // };
+    const API_URL = process.env.NODE_ENV === 'production' 
+    ? 'https://vi-meet.onrender.com/user' 
+    : 'http://localhost:5000/user'; // Adjust for your backend port
+
+const fetchUserData = async () => {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setUserName(data.user.email);
-          console.log("Set success", data.user.email);
-        } else {
-          console.log("User not authenticated");
-        }
-      } catch (error) {
-        console.log("Error fetching user data:", error);
-      }
-    };
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
 
+        console.log("User data fetched successfully:", data);
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+    }
+};
     fetchUserData();
   }, []);
 
