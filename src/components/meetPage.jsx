@@ -71,7 +71,7 @@ const fetchUserData = async () => {
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            // body: JSON.stringify({ email, password })
+            body: JSON.stringify({ "priyanshu2004ss@gmail.com", "Priyanshu" })
         });
 
         const data = await response.json();
