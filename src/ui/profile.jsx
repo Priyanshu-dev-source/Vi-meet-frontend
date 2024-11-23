@@ -20,7 +20,7 @@ const Profile = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setUserName(data.user.name);
+          setUserName(data.user.email);
         } else {
           console.log("User not authenticated");
         }
