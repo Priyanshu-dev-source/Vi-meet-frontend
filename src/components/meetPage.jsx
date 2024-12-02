@@ -41,15 +41,15 @@ export default function MeetPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // const response = await fetch("http://localhost:3001/user", {
-        //   method: "POST",
-        //   credentials: "include",
-        // });
-
-        const response = await fetch("https://vi-meet.onrender.com/user", {
+        const response = await fetch("http://localhost:3001/user", {
           method: "POST",
-          credentials: "include", // Include cookies in requests
+          credentials: "include",
         });
+
+        // const response = await fetch("https://vi-meet.onrender.com/user", {
+        //   method: "POST",
+        //   credentials: "include", // Include cookies in requests
+        // });
 
         if (response.ok) {
           const data = await response.json();

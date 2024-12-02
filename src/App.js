@@ -57,18 +57,6 @@ function App() {
   };
   return (
     <Router>
-      <div className="main-body-wrapper" style={{ filter: fillUp }}>
-        <div className="navbar-component-wrapper">
-          <NavbarComponent loginCard={loginCardPop} isLoggedIn={isLoggedIn} />
-        </div>
-
-        <div className="landing-home-page">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/meet" element={<MeetPage />} />
-          </Routes>
-        </div>
-      </div>
       <div className="login-auth-page-wrapper" style={{ display: flexDisp }}>
         <Routes>
           <Route
@@ -105,6 +93,18 @@ function App() {
             }
           />
         </Routes>
+      </div>
+      <div className="main-body-wrapper">
+        <div className="navbar-component-wrapper" style={{ filter: fillUp }}>
+          <NavbarComponent loginCard={loginCardPop} isLoggedIn={isLoggedIn} />
+        </div>
+
+        <div className="landing-home-page">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/meet" element={<MeetPage />} />
+          </Routes>
+        </div>
       </div>
       <ToastContainer />
     </Router>
