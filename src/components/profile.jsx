@@ -1,36 +1,28 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
-const Profile = () => {
+const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
   const [userName, setUserName] = useState("");
   const [isProfileBox, setIsProfileBox] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/user", {
-          method: "POST",
-          credentials: "include",
-        });
+    if (isLoggedIn) {
+      const storedUserName = sessionStorage.getItem("username");
+      setUserName(storedUserName || "");
+    }
+  }, [isLoggedIn]);
 
-        // const response = await fetch("https://vi-meet.onrender.com/user", {
-        //   method: "POST",
-        //   credentials: "include", // Include cookies in requests
-        // });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUserName(data.user.name);
-        } else {
-          console.log("User not authenticated");
-        }
-      } catch (error) {
-        console.log("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const handleLogout = () => {
+    setIsProfileBox(false);
+    localStorage.setItem("isLoggedIn", "false");
+    sessionStorage.removeItem("username"); 
+    sessionStorage.removeItem("email"); 
+    setIsLoggedIn(false);
+    navigate("/")
+    window.location.reload();
+  };
 
   const firstLetter = userName.charAt(0).toUpperCase();
 
@@ -40,7 +32,7 @@ const Profile = () => {
         <button
           className="navabr-profile-circle"
           onClick={() => {
-            setIsProfileBox((prev) => !prev);;
+            setIsProfileBox((prev) => !prev);
           }}
         >
           <div>{firstLetter}</div>
@@ -52,7 +44,7 @@ const Profile = () => {
           <div className="profile-details-name-part">
             Welcome home<br/>{userName}
           </div>
-          <button className="profile-logout-button">
+          <button className="profile-logout-button" onClick={handleLogout}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"

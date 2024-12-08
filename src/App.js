@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarComponent from "./components/navbar";
 import LandingPage from "./components/landingPage";
@@ -8,26 +8,39 @@ import MeetPage from "./components/meetPage";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+
 function App() {
   const [fillUp, setFillUp] = useState("blur(0px)");
-  const [flexDisp, setFlexDisp] = useState("none");
-  const [signDisp, setSignDisp] = useState("none");
+  const [loginRender, setLoginRender] = useState();
+  const [signUpRender, setSignUpRender] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in on page load
+    const savedLoginStatus = localStorage.getItem("isLoggedIn");
+    if (savedLoginStatus === "true") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const loginCardPop = () => {
     setFillUp("blur(4px)");
-    setFlexDisp("flex");
+    setLoginRender(true);
+    setIsLoggedIn(false);
   };
-  const closeLoginCard = () => {
-    setFlexDisp("none");
-    setSignDisp("none");
-    setFillUp("blur(0px)");
-  };
+  
   const signUpPop = () => {
-    closeLoginCard();
-    setSignDisp("flex");
     setFillUp("blur(4px)");
+    setSignUpRender(true);
+    setLoginRender(false);
   };
+
+  const closeCard = () => {
+    setFillUp("blur(0px");
+    setLoginRender(false);
+    setSignUpRender(false); 
+  } 
+
   const handleSuccess = (message) => {
     setFillUp("blur(0px)");
     toast.success(message, {
@@ -42,6 +55,7 @@ function App() {
       transition: Bounce,
     });
   };
+
   const handleError = (message) => {
     toast.error(message, {
       position: "bottom-right",
@@ -55,59 +69,65 @@ function App() {
       transition: Bounce,
     });
   };
+
+  const handleLoginSuccess = (successMessage) => {
+    handleSuccess(successMessage);
+    setIsLoggedIn(true);
+    localStorage.setItem("isLoggedIn", "true"); // Store the login status in localStorage
+  };
+
+  // const handleLogout = () => {
+  //   setIsLoggedIn(false);
+  //   localStorage.setItem("isLoggedIn", "false"); // Remove login status from localStorage
+  // };
+  
   return (
     <Router>
-      <div className="login-auth-page-wrapper" style={{ display: flexDisp }}>
+      <div className="main-body-wrapper">
+        <div className="navbar-component-wrapper" style={{ filter: fillUp }}>
+          <NavbarComponent loginCard={loginCardPop} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+        </div>
         <Routes>
-          <Route
-            path="/login"
-            element={
-              <LoginAuth
-                onClickButton={closeLoginCard}
-                signButton={signUpPop}
-                onUserLoggedIn={(successMessage) =>
-                  handleSuccess("Login succesful" , setIsLoggedIn(true))
-                }
-                onPasswordError={(errorMessage) =>
-                  handleError("Invalid Username or Password")
-                }
-              ></LoginAuth>
-            }
-          />
-        </Routes>
-      </div>
-      <div className="login-auth-page-wrapper" style={{ display: signDisp }}>
-        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/meet" element={<MeetPage isLoggedIn={isLoggedIn}/>} />
           <Route
             path="/signup"
             element={
+              signUpRender && 
               <SignUpAuth
-                onClickButton={closeLoginCard}
-                onUserCreated={(successMessage) =>
-                  handleSuccess("Signed up successfully")
+                onClickButton={closeCard}
+                onSuccess={(successMessage) =>
+                  handleSuccess(successMessage)
                 }
-                onUserNotCreated={(errorMessage) =>
-                  handleError("Email already exixts")
+                onError={(errorMessage) =>
+                  handleError(errorMessage)
                 }
               ></SignUpAuth>
             }
           />
+            <Route
+              path="/login"
+              element={
+                loginRender && 
+                <LoginAuth
+                onClickButton={closeCard}
+                signButton={signUpPop}
+                // onSuccess={(successMessage) =>
+                //   handleSuccess(successMessage, setIsLoggedIn(true))
+                //   }
+                onSuccess={handleLoginSuccess}
+                onError={(errorMessage) =>
+                  handleError(errorMessage)
+                }
+                ></LoginAuth>
+              }
+            />
         </Routes>
+        <ToastContainer />
       </div>
-      <div className="main-body-wrapper">
-        <div className="navbar-component-wrapper" style={{ filter: fillUp }}>
-          <NavbarComponent loginCard={loginCardPop} isLoggedIn={isLoggedIn} />
-        </div>
-
-        <div className="landing-home-page">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/meet" element={<MeetPage />} />
-          </Routes>
-        </div>
-      </div>
-      <ToastContainer />
     </Router>
   );
 }
 export default App;
+
+

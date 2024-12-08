@@ -10,7 +10,7 @@ body{
     margin: 0;
     padding: 0;
     overflow: hidden;
-    z-index:9999999999;
+    /* z-index:9999999999; */
 }
 
 input:-webkit-autofill {
@@ -53,6 +53,7 @@ input::placeholder{
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 999;
 }
 
 .navabr-profile-circle{
@@ -75,7 +76,8 @@ input::placeholder{
 
 .profile-detail-body-wrapper{
     height: 200px;
-    width: 200px;
+    width: 250px;
+    z-index: 9999;
     background-color: rgb(82, 82, 167);
     border-radius: 15px;
     transition: .2s ease-in-out;
@@ -83,10 +85,12 @@ input::placeholder{
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    top: 10%;
+    margin-top: 20%;
+    margin-right: 40% ;
     right: 5px;
     flex-direction: column;
 }
+
 
 .profile-details-name-part{
     height: 80px;
@@ -162,7 +166,7 @@ input::placeholder{
     flex-direction: row;
     font-size: 20px;
     list-style: none;
-    padding-left: 10px;
+    padding-left: 5rem;
     font-family: "Roboto Slab", serif;
     font-optical-sizing: auto;
     font-weight: 400;
@@ -172,6 +176,7 @@ input::placeholder{
     text-decoration: none; 
     color: rgb(207, 207, 207);
     font-family: var(--font-style);
+    border: none;
 }
 .navbar-items-container>li>a:hover{
     color: white;
@@ -227,13 +232,14 @@ input::placeholder{
     align-items: center;
     justify-content: center;
     flex-direction: row;
+    /* background-color: red; */
 }
 .landing-page-content-part{
     height: 100%;
     width: 60%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     flex-direction: column;
     /* padding-top: 20px; */
 }
@@ -243,17 +249,24 @@ input::placeholder{
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 10;
+    padding-bottom: 1%;
+    /* background-color: red; */
 }
 .landing-page-logo-part-container{
-    height: 100%;
+    height: 70%;
     width: 100%;
+    z-index: 20;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-bottom: 40px;
+    padding-bottom: 40px;    
+    /* background-color: red;  */
 }
+
 .landing-page-logo-first-container{
     position: absolute;
     height: 300px;
@@ -262,7 +275,7 @@ input::placeholder{
     background-image: linear-gradient(315deg, #2234ae 0%, #161256 74%);
     border-radius: 20%;
     transform: rotate(50deg);
-    z-index: 4;
+    z-index: 3;
     margin: 70px 0px 0px 100px;
     transition: ease-in-out .5s;
     display: flex;
@@ -293,7 +306,7 @@ input::placeholder{
 .landing-page-logo-first-container:hover{
     box-shadow:10px 5px 40px white;
     transform: rotate(-220deg);
-    /* z-index: 10; */
+    z-index: 10;
 }
 .landing-page-logo-rotator{
     position: fixed;
@@ -336,7 +349,7 @@ input::placeholder{
 .landing-page-content-header{
     height: 38%;
     width: 80%;
-    padding-top: 55px;
+    /* padding-top: 55px; */
     /* background-color: red; */
     display: flex;
     align-items: flex-start;
@@ -345,7 +358,7 @@ input::placeholder{
 .landing-page-content-info{
     height: 55%;
     width: 80%;
-    padding-bottom: 100px;
+    padding-bottom: 40px;
     /* background-color: black; */
     display: flex;
     align-items: center;
@@ -408,14 +421,27 @@ input::placeholder{
     color: white;
 }
 .login-auth-page-wrapper{
-    display: none;
+    display: flex;
     height: 600px;
     width: 450px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 100;
+    /* z-index: 100; */
+    transition: transform 0.4s ease-in-out;
+    /* background-color: aqua; */
+}
+
+.signUp-auth-page-wrapper{
+    display: flex;
+    height: 600px;
+    width: 450px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* z-index: 100; */
     transition: transform 0.4s ease-in-out;
     /* background-color: aqua; */
 }
@@ -431,7 +457,7 @@ input::placeholder{
     justify-content: center;
     color: white;
     flex-direction: column;
-    z-index: 1000;
+    /* z-index: 1000; */
 }
 .login-auth-container-header{
     height: 15%;
@@ -446,6 +472,22 @@ input::placeholder{
     flex-direction: row;
     /* background-color: red; */
 }
+
+.signUp-auth-container-header{
+    height: 15%;
+    width: 100%;
+    margin-top: -50px;
+    /* background-color: cyan; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    font-weight: 500;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    flex-direction: row;
+    /* background-color: red; */
+}
+
 .login-auth-login-name{
     height: 100%;
     width: 80%;

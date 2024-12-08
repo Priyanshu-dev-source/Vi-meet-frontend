@@ -1,9 +1,10 @@
-import React from "react";
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import { auth, db } from "../services/firebase"; 
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { ref, set } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 
-export default function SignUpAuth({ onClickButton, onUserCreated, onUserNotCreated }) {
+export default function SignUpAuth({ onClickButton, onSuccess, onError }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,30 +15,35 @@ export default function SignUpAuth({ onClickButton, onUserCreated, onUserNotCrea
     onClickButton()
   }
 
-  const handleSubmit = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3001/signup", { name, email, password })
-      .then((result) => {
-        if (result.status === 201) {
-          onUserCreated()
-          navigate("/")
-        }
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 400) {
-            onUserNotCreated()
-          // window.alert("Email already exixts")
-        } else {
-          console.log(err);
-        }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await updateProfile(user, {
+        displayName: name, 
       });
+      await set(ref(db, `users/${user.uid}`), {
+        username: name,
+        email: email,
+        password: password,
+      });
+  
+      navigate("/");
+      onSuccess("Signed up successfully");
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.error("Error signing up:", errorCode, errorMessage);
+      onError("Email already exists!");
+    }
   };
+  
 
   return (
-    <>
+    <div className="signUp-auth-page-wrapper">
       <div className="login-auth-detail-container">
-        <div className="login-auth-container-header">
+        <div className="signUp-auth-container-header">
           <div className="login-auth-login-name">Sign Up</div>
           <div
             className="login-auth-container-close-button"
@@ -55,7 +61,7 @@ export default function SignUpAuth({ onClickButton, onUserCreated, onUserNotCrea
         <div className="login-auth-container-body">
           <form
             className="login-auth-email-pass-container"
-            onSubmit={handleSubmit}
+            onSubmit={handleSignUp}
           >
             <input
               name="name"
@@ -89,13 +95,7 @@ export default function SignUpAuth({ onClickButton, onUserCreated, onUserNotCrea
             </button>
           </form>
         </div>
-        <div className="login-auth-page-wrapper">
-          Dont have an Account?&nbsp;&nbsp;{" "}
-          <a href="/" style={{ color: "white", textDecoration: "underline" }}>
-            Sign Up
-          </a>
-        </div>
       </div>
-    </>
+    </div>
   );
 }

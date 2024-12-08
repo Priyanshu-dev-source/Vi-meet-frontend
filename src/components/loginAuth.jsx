@@ -1,43 +1,49 @@
-import axios from "axios";
 import React from "react";
+import { auth} from "../services/firebase"
+import { browserLocalPersistence, signInWithEmailAndPassword, setPersistence } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedIn, onPasswordError }) {
+export default function LoginAuthPage ({ onClickButton, signButton, onSuccess, onError }) {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin=(e)=>{
-    e.preventDefault()
-    axios
-        .post("http://localhost:3001/login", {email, password}, {withCredentials:true})
-        .then((result)=>{
-            if(result.data==="Success"){
-                navigate("/meet")
-                axios.post("http://localhost:3001/user", {withCredentials:true})
-                .then(response=>{
-                  if(response.data.user){
-                    navigate("/meet", {state:{ user: response.data.user}})
-                    console.log("Logged in successfully")
-                  }
-                })
-                onUserLoggedIn()
-              }
-              else{
-                console.log("Error in logging in");
-              }
-            })
-        .catch(err =>{
-          onPasswordError();
-        })
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (!email || !password) return onError("Enter the Credentials");
 
-  }
+    setPersistence(auth, browserLocalPersistence)
+        .then(() => {
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    if( user !== null){
+                      sessionStorage.setItem("username", user.displayName);
+                      sessionStorage.setItem("email", user.email);
+                    }
+                    onSuccess("Logged in successfully");
+                    navigate("/meet");
+                })
+                  .catch((error) => {
+                    console.error("Login error:", error);
+                    const errorCode = error.code || "unknown_error";
+                    console.error("Login error:", errorCode);
+                    const errorMessage = error.message || "An unknown error occurred.";
+                    onError("Invalid Credentials");
+                    console.log(errorMessage)
+                });
+        }).catch((error) => {
+            console.error("Persistence error:", error);
+            onError("An error occurred while setting persistence.");
+        });
+};
 
   const handleSignUp = () => {
-    signButton();
     navigate("/signup");
+    // onClickButton();
+    signButton();
   };
 
   const handleCloseButton = () => {
@@ -45,8 +51,9 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
     onClickButton();
   };
 
+
   return (
-    <>
+    <div className="login-auth-page-wrapper">
       <div className="login-auth-detail-container">
         <div className="login-auth-container-header">
           <div className="login-auth-login-name">Login</div>
@@ -85,7 +92,7 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
           </form>
         </div>
         <div className="login-auth-container-signUp">
-          Dont have an Account?&nbsp;&nbsp;{" "}
+          Dont have an Account?&nbsp;&nbsp;
           <button
             onClick={handleSignUp}
             style={{
@@ -100,6 +107,6 @@ export default function LoginAuthPage({ onClickButton, signButton, onUserLoggedI
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

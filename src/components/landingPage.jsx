@@ -3,7 +3,7 @@ import logo from "../logo/video-calling-app.png";
 
 export default function landingPageComponent() {
   return (
-    <>
+    <div className="landing-home-page">
       <div className="landing-page-content-part">
         <div className="landing-page-content-header">
           <h1>Vi Meet</h1>
@@ -11,7 +11,7 @@ export default function landingPageComponent() {
         <div className="landing-page-content-info">
           <p style={{color: "white"}}>
             Connect effortlessly with our high-definition
-            video calling<br/> platform! Enjoy seamless, secure 
+            video calling<br/> platform. Enjoy seamless, secure 
             calls. Perfect for personal<br/> or professional use. 
             Stay connected with ease!
           </p>
@@ -39,6 +39,6 @@ export default function landingPageComponent() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

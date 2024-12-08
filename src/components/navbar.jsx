@@ -1,10 +1,11 @@
 import React from "react";
-import Profile from "../ui/profile"
+import Profile from "./profile"
 import { useNavigate } from 'react-router-dom';
+// import LoginAuthPage from "./loginAuth";
 
-export default function NavbarComponent({ loginCard, isLoggedIn }) {
-
+export default function NavbarComponent({ loginCard, isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
+  // const [stateChange, setStateChange] = useState(false)
 
   const handleClick = () => {
     navigate('/meet');
@@ -13,7 +14,9 @@ export default function NavbarComponent({ loginCard, isLoggedIn }) {
   const handleLogin = () =>{
     navigate('/login')
     loginCard()
+
   }
+
 
   return (
     <>
@@ -22,7 +25,7 @@ export default function NavbarComponent({ loginCard, isLoggedIn }) {
           <div
             style={{
               color: "white",
-              fontSize: "25px",
+              fontSize: "20px",
               fontWeight: "bold",
               cursor: "pointer",
             }}
@@ -51,7 +54,7 @@ export default function NavbarComponent({ loginCard, isLoggedIn }) {
           <button className="navbar-join-button" onClick={handleClick}>
             Join Meet
             </button>
-            {isLoggedIn && <Profile></Profile>}
+            {isLoggedIn && <Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}></Profile>}
         </div>
       </div>
     </>

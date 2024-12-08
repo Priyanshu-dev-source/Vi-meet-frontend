@@ -31,40 +31,12 @@ const AudioComponent = ({ isAudioOn }) => {
   }, [isAudioOn, audioStream]);
 };
 
-export default function MeetPage() {
+export default function MeetPage({ isLoggedIn}) {
   const [micSvg, setMicSvg] = useState("micOn");
   const [videoSvg, setVideoSvg] = useState("videoOn");
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
   const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/user", {
-          method: "POST",
-          credentials: "include",
-        });
-
-        // const response = await fetch("https://vi-meet.onrender.com/user", {
-        //   method: "POST",
-        //   credentials: "include", // Include cookies in requests
-        // });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUserName(data.user.name);
-          console.log("Set success");
-        } else {
-          console.log("User not authenticated");
-        }
-      } catch (error) {
-        console.log("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const handleMicSvg = () => {
     setMicSvg(micSvg === "micOff" ? "micOn" : "micOff");
@@ -82,8 +54,15 @@ export default function MeetPage() {
     setIsCameraOn(isCameraOn === false ? true : false);
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      const storedUserName = sessionStorage.getItem("username");
+      setUserName(storedUserName || "");
+    }
+  }, [isLoggedIn]);
+
   return (
-    <>
+    <div className="landing-home-page">
       <div className="meet-page-main-body-wrapper">
         <div className="meet-page-info-side-page">
           <div className="meet-page-info-side-page-header">Join Meet</div>
@@ -244,6 +223,6 @@ export default function MeetPage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
