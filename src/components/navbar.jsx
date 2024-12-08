@@ -3,7 +3,7 @@ import Profile from "./profile"
 import { useNavigate } from 'react-router-dom';
 // import LoginAuthPage from "./loginAuth";
 
-export default function NavbarComponent({ loginCard, isLoggedIn, setIsLoggedIn }) {
+export default function NavbarComponent({ loginCard, isLoggedIn, setIsLoggedIn, onSuccess }) {
   const navigate = useNavigate();
   // const [stateChange, setStateChange] = useState(false)
 
@@ -54,7 +54,7 @@ export default function NavbarComponent({ loginCard, isLoggedIn, setIsLoggedIn }
           <button className="navbar-join-button" onClick={handleClick}>
             Join Meet
             </button>
-            {isLoggedIn && <Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}></Profile>}
+            {isLoggedIn && <Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} onSuccess={onSuccess}></Profile>}
         </div>
       </div>
     </>

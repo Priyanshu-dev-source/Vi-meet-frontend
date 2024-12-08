@@ -16,7 +16,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Check if user is logged in on page load
     const savedLoginStatus = localStorage.getItem("isLoggedIn");
     if (savedLoginStatus === "true") {
       setIsLoggedIn(true);
@@ -28,7 +27,7 @@ function App() {
     setLoginRender(true);
     setIsLoggedIn(false);
   };
-  
+
   const signUpPop = () => {
     setFillUp("blur(4px)");
     setSignUpRender(true);
@@ -38,8 +37,8 @@ function App() {
   const closeCard = () => {
     setFillUp("blur(0px");
     setLoginRender(false);
-    setSignUpRender(false); 
-  } 
+    setSignUpRender(false);
+  };
 
   const handleSuccess = (message) => {
     setFillUp("blur(0px)");
@@ -73,55 +72,51 @@ function App() {
   const handleLoginSuccess = (successMessage) => {
     handleSuccess(successMessage);
     setIsLoggedIn(true);
-    localStorage.setItem("isLoggedIn", "true"); // Store the login status in localStorage
+    localStorage.setItem("isLoggedIn", "true");
   };
 
-  // const handleLogout = () => {
-  //   setIsLoggedIn(false);
-  //   localStorage.setItem("isLoggedIn", "false"); // Remove login status from localStorage
-  // };
-  
   return (
     <Router>
       <div className="main-body-wrapper">
         <div className="navbar-component-wrapper" style={{ filter: fillUp }}>
-          <NavbarComponent loginCard={loginCardPop} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+          <NavbarComponent
+            loginCard={loginCardPop}
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            onSuccess={(successMessage) => handleSuccess(successMessage)}
+          />
         </div>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/meet" element={<MeetPage isLoggedIn={isLoggedIn}/>} />
+          <Route path="/meet" element={<MeetPage isLoggedIn={isLoggedIn} />} />
           <Route
             path="/signup"
             element={
-              signUpRender && 
-              <SignUpAuth
-                onClickButton={closeCard}
-                onSuccess={(successMessage) =>
-                  handleSuccess(successMessage)
-                }
-                onError={(errorMessage) =>
-                  handleError(errorMessage)
-                }
-              ></SignUpAuth>
+              signUpRender && (
+                <SignUpAuth
+                  onClickButton={closeCard}
+                  onSuccess={(successMessage) => handleSuccess(successMessage)}
+                  onError={(errorMessage) => handleError(errorMessage)}
+                ></SignUpAuth>
+              )
             }
           />
-            <Route
-              path="/login"
-              element={
-                loginRender && 
+          <Route
+            path="/login"
+            element={
+              loginRender && (
                 <LoginAuth
-                onClickButton={closeCard}
-                signButton={signUpPop}
-                // onSuccess={(successMessage) =>
-                //   handleSuccess(successMessage, setIsLoggedIn(true))
-                //   }
-                onSuccess={handleLoginSuccess}
-                onError={(errorMessage) =>
-                  handleError(errorMessage)
-                }
+                  onClickButton={closeCard}
+                  signButton={signUpPop}
+                  // onSuccess={(successMessage) =>
+                  //   handleSuccess(successMessage, setIsLoggedIn(true))
+                  //   }
+                  onSuccess={handleLoginSuccess}
+                  onError={(errorMessage) => handleError(errorMessage)}
                 ></LoginAuth>
-              }
-            />
+              )
+            }
+          />
         </Routes>
         <ToastContainer />
       </div>
@@ -129,5 +124,3 @@ function App() {
   );
 }
 export default App;
-
-

@@ -1,8 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../services/firebase'
 
-const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
+const Profile = ({ isLoggedIn, setIsLoggedIn, onSuccess }) => {
   const [userName, setUserName] = useState("");
   const [isProfileBox, setIsProfileBox] = useState(false);
   const navigate = useNavigate();
@@ -21,7 +23,12 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
     sessionStorage.removeItem("email"); 
     setIsLoggedIn(false);
     navigate("/")
-    window.location.reload();
+    // window.location.reload();
+    signOut(auth).then(() => {
+      onSuccess("Signed Out successfully")
+    }).catch((error) => {
+      console.log(error)
+    });
   };
 
   const firstLetter = userName.charAt(0).toUpperCase();
