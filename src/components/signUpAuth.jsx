@@ -8,6 +8,7 @@ export default function SignUpAuth({ onClickButton, onSuccess, onError }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loadingAnimation, setLoadingAnimation] = useState(false);
   const navigate = useNavigate();
 
   const handleCloseButton = () =>{
@@ -17,6 +18,7 @@ export default function SignUpAuth({ onClickButton, onSuccess, onError }) {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    setLoadingAnimation(true)
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -28,14 +30,15 @@ export default function SignUpAuth({ onClickButton, onSuccess, onError }) {
         email: email,
         password: password,
       });
-  
       navigate("/");
       onSuccess("Signed up successfully");
+      setLoadingAnimation(false)
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.error("Error signing up:", errorCode, errorMessage);
       onError("Email already exists!");
+      setLoadingAnimation(false)
     }
   };
   
@@ -96,6 +99,11 @@ export default function SignUpAuth({ onClickButton, onSuccess, onError }) {
           </form>
         </div>
       </div>
+      { loadingAnimation &&
+        <div className="loader-wrapper">
+          <div className="loader"></div>
+        </div>
+      }
     </div>
   );
 }

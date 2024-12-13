@@ -28,18 +28,6 @@ function App() {
     }
   }, []);
 
-  // window.addEventListener('beforeunload', function (e) {
-  //   e.preventDefault();
-  //   setIsLoggedIn(false);
-  //   sessionStorage.removeItem("username");
-  //   sessionStorage.removeItem("email");
-  //   console.log("Page has been closed");
-  // });
-
-  // window.addEventListener('beforeunload', ()=>{
-  //   alert("refreshing the site wouold leave the meeting")
-  // })
-
   const loginCardPop = () => {
     setFillUp("blur(4px)");
     setLoginRender(true);

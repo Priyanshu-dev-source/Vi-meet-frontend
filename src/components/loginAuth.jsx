@@ -9,9 +9,11 @@ export default function LoginAuthPage ({ onClickButton, signButton, onSuccess, o
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loadingAnimation, setLoadingAnimation] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setLoadingAnimation(true)
     if (!email || !password) return onError("Enter the Credentials");
 
     setPersistence(auth, browserLocalPersistence)
@@ -25,15 +27,7 @@ export default function LoginAuthPage ({ onClickButton, signButton, onSuccess, o
                     }
                     onSuccess("Logged in successfully");
                     navigate("/meet");
-                    // setTimeout(() => {
-                    //   signOut(auth)
-                    //     .then(() => {
-                    //       console.log("User logged out after timeout");
-                    //     })
-                    //     .catch((error) => {
-                    //       console.error("Error signing out:", error);
-                    //     });
-                    // }, 5000);
+                    
                 })
                   .catch((error) => {
                     console.error("Login error:", error);
@@ -42,11 +36,15 @@ export default function LoginAuthPage ({ onClickButton, signButton, onSuccess, o
                     const errorMessage = error.message || "An unknown error occurred.";
                     onError("Invalid Credentials");
                     console.log(errorMessage)
-                });
-        }).catch((error) => {
-            console.error("Persistence error:", error);
-            onError("An error occurred while setting persistence.");
-        });
+                })
+                .finally(()=>{
+                  setLoadingAnimation(false);
+                })
+              }).catch((error) => {
+                console.error("Persistence error:", error);
+                onError("An error occurred while setting persistence.");
+                setLoadingAnimation(false);
+              });
 };
 
   const handleSignUp = () => {
@@ -116,6 +114,11 @@ export default function LoginAuthPage ({ onClickButton, signButton, onSuccess, o
           </button>
         </div>
       </div>
+      { loadingAnimation && 
+        <div className="loader-wrapper">
+          <div className="loader"></div>
+        </div>
+      }
     </div>
   );
 }

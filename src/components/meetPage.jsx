@@ -39,10 +39,7 @@ export default function MeetPage({ isLoggedIn, onError, handleJoinPageVisibility
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
   const [userName, setUserName] = useState("");
-  // const [transalateJoinPage, setTransalateJoinPage] = useState("translate(1400px)")
-
   const navigate = useNavigate();
-  // const [joinMeetPageVisibility, setJoinMeetPageVisibility] = useState(false);
 
   const handleMicSvg = () => {
     setMicSvg(micSvg === "micOff" ? "micOn" : "micOff");

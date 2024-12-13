@@ -15,6 +15,7 @@ body{
 
 button{
     border: none;
+    outline: none;
 }
 
 input:-webkit-autofill {
@@ -913,7 +914,7 @@ input::placeholder{
     max-width: 400px; /* Adjust according to your requirement */
     /* max-height: 400px; */
     height: 200px;
-    width: 310px;
+    width: 345px;
     background-color: rgb(49, 61, 112);
     border-radius: 20px;
     padding: 20px;
@@ -929,7 +930,7 @@ input::placeholder{
 
 .join-meet-page-account-own-video{
     height: 200px;
-    width: 310px;
+    width: 345px;
     background-color: rgb(49, 61, 112);
     border-radius: 20px;
     padding: 20px;
@@ -981,7 +982,7 @@ input::placeholder{
 .join-meet-page-optionbar-chat-button,
 .join-meet-page-optionbar-audio-button{
     height: 80%;
-    width: 50px;
+    width: 57px;
     border: none;
     border-radius: 50%;
     background-color: transparent;
@@ -1009,3 +1010,49 @@ input::placeholder{
 .join-meet-page-optionbar-leave-button:hover{
     background-color: rgb(193, 1, 1);
 }
+
+/* HTML: <div class="loader"></div> */
+.loader {    
+    --r1: 154%;
+    --r2: 68.5%;
+    height: 120px;
+    width: 120px;
+    aspect-ratio: 1;
+    border-radius: 50%; 
+    position: absolute;
+    left: 48%;
+    top: 31%;
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+    background:
+      radial-gradient(var(--r1) var(--r2) at top   ,#0000 79.5%,#269af2 80%),
+      radial-gradient(var(--r1) var(--r2) at bottom,#269af2 79.5%,#0000 80%),
+      radial-gradient(var(--r1) var(--r2) at top   ,#0000 79.5%,#269af2 80%),
+      #ccc;
+    background-size: 50.5% 220%;
+    background-position: -100% 0%,0% 0%,100% 0%;
+    background-repeat:no-repeat;
+    animation: l9 2s infinite linear;
+    /* filter: blur(0px) !important; */
+  }
+
+  .loader-wrapper{
+    position: absolute;
+    height: 1000px;
+    width: 1600px;
+    margin-left: -600px;
+    margin-top: -70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 200px 80px  black;
+    backdrop-filter: blur(5px);
+    /* background-color: red; */
+  }
+
+  @keyframes l9 {
+      33%  {background-position:    0% 33% ,100% 33% ,200% 33% }
+      66%  {background-position: -100%  66%,0%   66% ,100% 66% }
+      100% {background-position:    0% 100%,100% 100%,200% 100%}
+  }
