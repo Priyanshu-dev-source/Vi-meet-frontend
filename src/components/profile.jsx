@@ -31,7 +31,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, onSuccess }) => {
     });
   };
 
-  const firstLetter = userName.charAt(0).toUpperCase();
+  const firstLetter = userName.split(" ").map(word => word[0]).join("").toUpperCase();
 
   return (
     <>

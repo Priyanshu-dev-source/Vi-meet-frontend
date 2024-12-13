@@ -13,6 +13,10 @@ body{
     /* z-index:9999999999; */
 }
 
+button{
+    border: none;
+}
+
 input:-webkit-autofill {
     background-color: transparent !important;
     color: inherit !important;
@@ -196,7 +200,7 @@ input::placeholder{
     width:  100px;
     border: none;
     border-radius: 5px;   
-    font-size: 15px;
+    font-size: 13px;
     background-color: var(--button-color);
     color: white;
     font-family: var(--font-style);
@@ -216,7 +220,7 @@ input::placeholder{
     width:  100px;
     border: none;
     border-radius: 5px;   
-    font-size: 15px;
+    font-size: 13px;
     background-color: var(--button-color);
     color: white;
     font-family: var(--font-style);
@@ -753,6 +757,13 @@ input::placeholder{
     flex-direction: column;
     overflow: hidden;
 }
+
+.join-meet-page-account-own-video .webcam-container {
+    width: 114%;
+    height: 111%;
+    padding: 0;
+  }
+
 .meet-page-view-side-page-video-portal-mic-video-button{
     height: 15%;
     width: 100%;
@@ -794,4 +805,207 @@ input::placeholder{
     width: 300px;
     background-color: black;
     position: absolute;
+}
+
+.join-meet-page-wrapper{
+    height: 100%;
+    width: 100%;
+    /* background-color: red; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s ease-in-out
+}
+
+.join-meet-page-video-chat-body{
+    height: 98%;
+    width: 98%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;
+    /* background-color: aquamarine; */
+    transition: 0.5s ease-in-out;
+    transform: translateX(1400px);
+}
+
+.join-meet-page-video-optionbar-area{
+    height: 100%;
+    width: 80%;
+    /* background-color: red; */
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    /* transform: translateX(0px); */
+    transition: all 0.3s ease-in-out;
+}
+
+.join-meet-page-video-area{
+    height: 85%;
+    width: 98%;
+    /* background-color: aqua; */
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    /* place-items: center; */
+    /* align-content: center;*/
+    /* grid-template-columns: repeat(auto-fill, minmax(auto, 1fr)); */
+    /* grid-template-rows: repeat(auto-fill, minmax(auto, 1fr)); */
+    column-gap: 10px;
+    row-gap: 10px;
+    overflow: auto;
+    scrollbar-width: none;
+}
+
+.join-meet-page-video-area::-webkit-scrollbar{
+    display: none;
+}
+
+.join-meet-page-acouunt-holder-profile-picture{
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    background-color: #161256;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    color: white;
+    margin: auto 0;
+}
+
+.join-meet-page-acouunt-own-holder-profile-picture{
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    background-color: #161256;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    color: white;
+    margin: auto 0;
+}
+
+/* .join-meet-page-account-own-video{
+    grid-column: 1 / -1; 
+    grid-row: 1 / -1; 
+} */
+
+.join-meet-page-optionbar-area{
+    height: 10%;
+    width: 98%;
+    background-color: rgb(49, 61, 112);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.join-meet-page-account-video{
+    /* place-self: center; */
+    /* grid-column: 1 / -1; 
+    grid-row: 1 / -1; */
+    /* height: 100%;
+    width:100% ;
+    max-width: 400px; /* Adjust according to your requirement */
+    /* max-height: 400px; */
+    height: 200px;
+    width: 310px;
+    background-color: rgb(49, 61, 112);
+    border-radius: 20px;
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+    transition: 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: 0.3s ease-in-out;
+}
+
+.join-meet-page-account-own-video{
+    height: 200px;
+    width: 310px;
+    background-color: rgb(49, 61, 112);
+    border-radius: 20px;
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+    transition: 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.join-meet-page-account-own-video video{
+    padding: 0;
+    width: 99%;
+    height: 110%; 
+    object-fit: cover;
+}
+
+.join-meet-page-chat-area{
+    height: 98%;
+    width: 20%;
+    background-color: rgb(49, 61, 112);
+    border-radius: 20px;
+    transition: 0.3s ease-in-out;
+    display: flex;
+    transform: translateX(400px);
+}
+
+.join-meet-page-account-name{
+    position: relative;
+    bottom: 10px;
+    height: 40px;
+    width: 80%;
+    /* background-color: aliceblue; */
+    color: white;
+    /* float: ri    ght; */
+    display: flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom: 0;
+    font-size: 20px;
+    /* margin-top: 200px; */
+}
+
+.join-meet-page-optionbar-video-button,
+.join-meet-page-optionbar-chat-button,
+.join-meet-page-optionbar-audio-button{
+    height: 80%;
+    width: 50px;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+.join-meet-page-optionbar-leave-button{
+    cursor: pointer;
+    height: 80%;
+    width: 110px;
+    border: none;
+    border-radius: 30px;
+    background-color: red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2 ease-in-out;
+    /* border: 2px solid white; */
+}
+
+.join-meet-page-optionbar-leave-button:hover{
+    background-color: rgb(193, 1, 1);
 }

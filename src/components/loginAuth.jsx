@@ -1,6 +1,6 @@
 import React from "react";
 import { auth} from "../services/firebase"
-import { browserLocalPersistence, signInWithEmailAndPassword, setPersistence } from "firebase/auth";
+import { browserLocalPersistence, signInWithEmailAndPassword, setPersistence} from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -25,6 +25,15 @@ export default function LoginAuthPage ({ onClickButton, signButton, onSuccess, o
                     }
                     onSuccess("Logged in successfully");
                     navigate("/meet");
+                    // setTimeout(() => {
+                    //   signOut(auth)
+                    //     .then(() => {
+                    //       console.log("User logged out after timeout");
+                    //     })
+                    //     .catch((error) => {
+                    //       console.error("Error signing out:", error);
+                    //     });
+                    // }, 5000);
                 })
                   .catch((error) => {
                     console.error("Login error:", error);

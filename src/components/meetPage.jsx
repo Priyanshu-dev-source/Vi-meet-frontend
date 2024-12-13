@@ -1,5 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+// import JoinMeetPage from './joinMeetPage'
 import Webcam from "react-webcam";
 
 const AudioComponent = ({ isAudioOn }) => {
@@ -31,12 +33,16 @@ const AudioComponent = ({ isAudioOn }) => {
   }, [isAudioOn, audioStream]);
 };
 
-export default function MeetPage({ isLoggedIn}) {
+export default function MeetPage({ isLoggedIn, onError, handleJoinPageVisibility, sendUserNameData }) {
   const [micSvg, setMicSvg] = useState("micOn");
   const [videoSvg, setVideoSvg] = useState("videoOn");
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
   const [userName, setUserName] = useState("");
+  // const [transalateJoinPage, setTransalateJoinPage] = useState("translate(1400px)")
+
+  const navigate = useNavigate();
+  // const [joinMeetPageVisibility, setJoinMeetPageVisibility] = useState(false);
 
   const handleMicSvg = () => {
     setMicSvg(micSvg === "micOff" ? "micOn" : "micOff");
@@ -53,6 +59,17 @@ export default function MeetPage({ isLoggedIn}) {
     setVideoSvg(videoSvg === "videoOff" ? "videoOn" : "videoOff");
     setIsCameraOn(isCameraOn === false ? true : false);
   };
+
+  const handleNewMeet = () =>{
+    if(!userName){
+      onError("Please enter name")
+    }
+    else{
+      navigate("/joinMeetPage")
+      handleJoinPageVisibility()
+      sendUserNameData(userName)
+    }
+  }
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -71,7 +88,7 @@ export default function MeetPage({ isLoggedIn}) {
             <br /> enter the code and click on Join
           </div>
           <div className="meet-page-info-side-page-meet-button">
-            <button>New Meet</button>
+            <button onClick={handleNewMeet}>New Meet</button>
             <input
               type="text"
               placeholder="Enter name"
@@ -127,6 +144,7 @@ export default function MeetPage({ isLoggedIn}) {
                 <Webcam
                   audio={false}
                   videoConstraints={videoConstraints}
+                  style={{ transform: "scaleX(-1)" }}
                 ></Webcam>
               )}
               <AudioComponent isAudioOn={isAudioOn}></AudioComponent>
