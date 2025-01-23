@@ -172,7 +172,7 @@ input::placeholder{
     font-size: 20px;
     list-style: none;
     padding-left: 5rem;
-    font-family: "Roboto Slab", serif;
+    font-family: "Ubuntu", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
@@ -201,10 +201,10 @@ input::placeholder{
     width:  100px;
     border: none;
     border-radius: 5px;   
-    font-size: 13px;
+    font-size: 15px;
     background-color: var(--button-color);
     color: white;
-    font-family: var(--font-style);
+    font-family: "Ubuntu",sans-serif;
     transition: 0.2s linear;
     cursor: pointer;
 }
@@ -221,10 +221,11 @@ input::placeholder{
     width:  100px;
     border: none;
     border-radius: 5px;   
-    font-size: 13px;
+    font-size: 15px;
     background-color: var(--button-color);
     color: white;
-    font-family: var(--font-style);
+    /* font-family: var(--font-style); */
+    font-family: "Ubuntu",sans-serif;
     transition: 0.2s linear;
     cursor: pointer;
 }
@@ -354,7 +355,7 @@ input::placeholder{
 .landing-page-content-header{
     height: 38%;
     width: 80%;
-    /* padding-top: 55px; */
+    padding-top: 40px;
     /* background-color: red; */
     display: flex;
     align-items: flex-start;
@@ -960,6 +961,8 @@ input::placeholder{
     transition: 0.3s ease-in-out;
     display: flex;
     transform: translateX(400px);
+    align-items: center;
+    justify-content: center;
 }
 
 .join-meet-page-account-name{

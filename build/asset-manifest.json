@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.dd9db98e.chunk.css",
-    "main.js": "/static/js/main.838491c8.chunk.js",
-    "main.js.map": "/static/js/main.838491c8.chunk.js.map",
-    "runtime~main.js": "/static/js/runtime~main.b36d5e71.js",
-    "runtime~main.js.map": "/static/js/runtime~main.b36d5e71.js.map",
+    "main.css": "/static/css/main.10fdc250.chunk.css",
+    "main.js": "/static/js/main.f2025a1e.chunk.js",
+    "main.js.map": "/static/js/main.f2025a1e.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.91560102.js",
+    "runtime~main.js.map": "/static/js/runtime~main.91560102.js.map",
     "static/css/2.b24350a8.chunk.css": "/static/css/2.b24350a8.chunk.css",
-    "static/js/2.0f89941e.chunk.js": "/static/js/2.0f89941e.chunk.js",
-    "static/js/2.0f89941e.chunk.js.map": "/static/js/2.0f89941e.chunk.js.map",
-    "static/js/3.b265e9c7.chunk.js": "/static/js/3.b265e9c7.chunk.js",
-    "static/js/3.b265e9c7.chunk.js.map": "/static/js/3.b265e9c7.chunk.js.map",
+    "static/js/2.50dea389.chunk.js": "/static/js/2.50dea389.chunk.js",
+    "static/js/2.50dea389.chunk.js.map": "/static/js/2.50dea389.chunk.js.map",
+    "static/js/3.1af95c37.chunk.js": "/static/js/3.1af95c37.chunk.js",
+    "static/js/3.1af95c37.chunk.js.map": "/static/js/3.1af95c37.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.bb451686d2577d8244f8417443238b02.js": "/precache-manifest.bb451686d2577d8244f8417443238b02.js",
+    "precache-manifest.6b9d5ab1cf2e4b3b1e3c9149cd633b33.js": "/precache-manifest.6b9d5ab1cf2e4b3b1e3c9149cd633b33.js",
     "service-worker.js": "/service-worker.js",
     "static/css/2.b24350a8.chunk.css.map": "/static/css/2.b24350a8.chunk.css.map",
-    "static/css/main.dd9db98e.chunk.css.map": "/static/css/main.dd9db98e.chunk.css.map",
+    "static/css/main.10fdc250.chunk.css.map": "/static/css/main.10fdc250.chunk.css.map",
     "static/media/video-calling-app.png": "/static/media/video-calling-app.389913b6.png"
   }
 }

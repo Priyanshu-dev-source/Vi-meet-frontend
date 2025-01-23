@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
+import { io } from "socket.io-client";
+import { getDatabase, ref, set, onValue, remove } from "firebase/database";
 
 const AudioComponent = ({ isAudioOn }) => {
   const [audioStream, setAudioStream] = useState(null);
@@ -30,9 +33,16 @@ const AudioComponent = ({ isAudioOn }) => {
   }, [isAudioOn, audioStream]);
 };
 
-// window.removeEventListener('beforeunload', alert("Meeting is leaved due to refresh"));
-
-const JoinMeetPage = ({ translateJoinPage, isLoggedIn, userNameData }) => {
+const JoinMeetPage = ({
+  translateJoinPage,
+  isLoggedIn,
+  userNameData,
+  handleNavDisp,
+  onSuccess,
+  onError,
+}) => {
+  const db = getDatabase();
+  const [users, setUsers] = useState([]);
   const [userName, setUserName] = useState("");
   const [micSvg, setMicSvg] = useState("micOn");
   const [videoSvg, setVideoSvg] = useState("videoOn");
@@ -40,7 +50,15 @@ const JoinMeetPage = ({ translateJoinPage, isLoggedIn, userNameData }) => {
   const [chatBoxTranslate, setChatBoxTranslate] = useState("translateX(400px)");
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
-
+  const [socket, setSocket] = useState(null);
+  const pathname = window.location.pathname;
+  const segments = pathname.split("/");
+  const dynamicRoute = segments[2];
+  const usersRef = useMemo(
+    () => ref(db, `rooms/${dynamicRoute}`),
+    [db, dynamicRoute]
+  );
+  const navigate = useNavigate();
 
   const videoConstraints = {
     width: 200,
@@ -76,7 +94,101 @@ const JoinMeetPage = ({ translateJoinPage, isLoggedIn, userNameData }) => {
     }, 50);
   };
 
-  var firstLetter = userName.split(" ").map(word => word[0]).join("").toUpperCase();
+  useEffect(() => {
+    if (!socket) {
+      const newSocket = io("http://localhost:4001");
+      setSocket(newSocket);
+
+      newSocket.on("connect", () => {
+        console.log("Connected to socket server");
+
+        if (dynamicRoute === "new") {
+          setUserName(userNameData);
+          newSocket.emit("create-room", async (roomId) => {
+            console.log("Room created:", roomId);
+            const roomRef = ref(db, `rooms/${roomId}`);
+            await set(roomRef, {
+              users: { [newSocket.id]: userNameData },
+            });
+
+            navigate(`/joinMeetPage/${roomId}`);
+            onSuccess("Room created successfully");
+          });
+        } else {
+          const roomRef = ref(db, `rooms/${dynamicRoute}`);
+          onValue(roomRef, (snapshot) => {
+            if (snapshot.exists()) {
+              const userRef = ref(
+                db,
+                `rooms/${dynamicRoute}/users/${newSocket.id}`
+              );
+              set(userRef, userNameData);
+
+              newSocket.emit("user-connection-room", dynamicRoute, () => {
+                console.log("Joining room:", dynamicRoute);
+                onSuccess("Successfully connected to room");
+              });
+            } else {
+              onError("Room does not exist. Please check the Room ID.");
+            }
+          });
+        }
+      });
+
+      newSocket.on("user-joined", () => {
+        setTimeout(() => {
+          onSuccess(`User ${userNameData} joined`);
+        }, 1000);
+      });
+
+      newSocket.on("user-connection", (clientCount) => {
+        // onSuccess(`User connected with ID: ${clientCount}`);
+        console.log("User connected with ID:", clientCount/2);
+      });
+
+      return () => {
+        newSocket.disconnect();
+        console.log("Socket disconnected");
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    onValue(usersRef, (snapshot) => {
+      const usersData = snapshot.val();
+      console.log("Fetched users data:", usersData);
+      if (usersData && usersData.users) {
+        setUsers(
+          Object.entries(usersData.users).map(([socketId, userName]) => ({
+            socketId,
+            userName,
+          }))
+        );
+      } else {
+        setUsers([]);
+      }
+    });
+  }, [usersRef]);
+
+  const leaveMeeting = () => {
+    const userRef = ref(db, `rooms/${dynamicRoute}/users/${userNameData}`);
+    console.log("User Reference: ", userRef);
+    remove(userRef)
+      .then(() => {
+        socket.emit("leave-room", dynamicRoute);
+        socket.on("user-left",(socketId)=>{
+          onError(`User ${userNameData} left the room wit id ${socketId}.`);
+        })
+        console.log("User removed from database");
+        navigate("/meet");
+        handleNavDisp();
+        onError(`User ${userNameData} left the room.`);
+        socket.disconnect();
+      })
+      .catch((error) => {
+        console.error("Error removing user: ", error);
+      });
+  };
 
   return (
     <div className="join-meet-page-wrapper">
@@ -86,83 +198,31 @@ const JoinMeetPage = ({ translateJoinPage, isLoggedIn, userNameData }) => {
       >
         <div className="join-meet-page-video-optionbar-area">
           <div className="join-meet-page-video-area">
-            <div className="join-meet-page-account-own-video">
-            {isCameraOn ? (
-              <div className="webcam-container">
-                <Webcam
-                  audio={false}
-                  videoConstraints={videoConstraints}
-                  style={{ transform: "scaleX(-1)" }}
-                />
-              </div>
-              ) : (
-              <div className="join-meet-page-acouunt-own-holder-profile-picture">
-                {firstLetter || userNameData.split(" ").map(word => word[0]).join("").toUpperCase()}
-              </div>
-              )}
-              <AudioComponent isAudioOn={isAudioOn}></AudioComponent>
-              <div className="join-meet-page-account-name">{userName || userNameData}</div>
-            </div>
-            <div className="join-meet-page-account-video">
-                <div className="join-meet-page-acouunt-holder-profile-picture">
-                  {/* {firstLetter} */}
+            {users.map(({ socketId, userName }) => (
+              <div key={socketId} className="join-meet-page-account-own-video">
+                {isCameraOn ? (
+                  <div className="webcam-container">
+                    <Webcam
+                      audio={false}
+                      videoConstraints={videoConstraints}
+                      style={{ transform: "scaleX(-1)" }}
+                    />
+                  </div>
+                ) : (
+                  <div className="join-meet-page-acouunt-own-holder-profile-picture">
+                    {userName
+                      .split(" ")
+                      .map((word) => word[0])
+                      .join("")
+                      .toUpperCase()}
+                  </div>
+                )}
+                <AudioComponent isAudioOn={isAudioOn} />
+                <div className="join-meet-page-account-name">
+                  {userName || userNameData}
                 </div>
-              <div className="join-meet-page-account-name">
-                {/* {userName} */}
-                </div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
-            <div className="join-meet-page-account-video">
-              <div className="join-meet-page-acouunt-holder-profile-picture"></div>
-              <div className="join-meet-page-account-name"></div>
-            </div>
+              </div>
+            ))}
           </div>
           <div className="join-meet-page-optionbar-area">
             <button
@@ -231,7 +291,10 @@ const JoinMeetPage = ({ translateJoinPage, isLoggedIn, userNameData }) => {
                 <path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z" />
               </svg>
             </button>
-            <button className="join-meet-page-optionbar-leave-button">
+            <button
+              className="join-meet-page-optionbar-leave-button"
+              onClick={leaveMeeting}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="40px"
@@ -247,7 +310,9 @@ const JoinMeetPage = ({ translateJoinPage, isLoggedIn, userNameData }) => {
         <div
           className="join-meet-page-chat-area"
           style={{ display: chatBoxDisp, transform: chatBoxTranslate }}
-        ></div>
+        >
+          Hello Brother
+        </div>
       </div>
     </div>
   );

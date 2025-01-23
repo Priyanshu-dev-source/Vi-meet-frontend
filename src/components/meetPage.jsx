@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-// import JoinMeetPage from './joinMeetPage'
+import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 
 const AudioComponent = ({ isAudioOn }) => {
@@ -33,12 +32,20 @@ const AudioComponent = ({ isAudioOn }) => {
   }, [isAudioOn, audioStream]);
 };
 
-export default function MeetPage({ isLoggedIn, onError, handleJoinPageVisibility, sendUserNameData }) {
+export default function MeetPage({
+  isLoggedIn,
+  onError,
+  onSuccess,
+  handleJoinPageVisibility,
+  sendUserNameData,
+  // setId
+}) {
   const [micSvg, setMicSvg] = useState("micOn");
   const [videoSvg, setVideoSvg] = useState("videoOn");
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [roomId, setRoomId] = useState("");
   const navigate = useNavigate();
 
   const handleMicSvg = () => {
@@ -57,16 +64,34 @@ export default function MeetPage({ isLoggedIn, onError, handleJoinPageVisibility
     setIsCameraOn(isCameraOn === false ? true : false);
   };
 
-  const handleNewMeet = () =>{
-    if(!userName){
-      onError("Please enter name")
+  const handleNewMeet = () => {
+    if (!userName) {
+      onError("Please enter name");
+    } else {
+      navigate("/joinMeetPage/new");
+      handleJoinPageVisibility();
+      sendUserNameData(userName);
     }
-    else{
-      navigate("/joinMeetPage")
-      handleJoinPageVisibility()
-      sendUserNameData(userName)
+  };
+  
+    const handleJoinRoom = ()=>{
+      if(!roomId && !userName){
+        onError("Enter the join code and name")
+      }
+      else if(!roomId){
+        onError("Enter the join code")
+      }
+      else if(!userName){
+        onError("Please enter name");
+      }
+      else{
+        navigate(`/joinMeetPage/${roomId}`);
+        handleJoinPageVisibility();
+        sendUserNameData(userName);
+        // console.log("Join room id", roomId);
+      }
     }
-  }
+
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -96,10 +121,16 @@ export default function MeetPage({ isLoggedIn, onError, handleJoinPageVisibility
             ></input>
           </div>
           <div className="meet-page-info-side-page-meet-code-join">
-            <input type="text" placeholder="Enter code" />
+            <input
+              type="text"
+              placeholder="Enter code"
+              onChange={(e) => setRoomId(e.target.value)}
+            />
           </div>
           <div className="meet-page-info-side-page-join-button">
-            <button>
+            <button 
+            onClick={handleJoinRoom} 
+            >
               <div
                 style={{
                   height: "100%",
@@ -129,7 +160,9 @@ export default function MeetPage({ isLoggedIn, onError, handleJoinPageVisibility
                   paddingBottom: "5px",
                 }}
               >
-                Join
+                {/* <button onClick={handleJoinRoom}> */}
+                  Join
+                {/* </button> */}
               </div>
             </button>
           </div>

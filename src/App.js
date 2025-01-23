@@ -19,6 +19,7 @@ function App() {
   const [translateJoinPage, setTranslateJoinPage] = useState("translateX(1400px)");
   const [joinMeetPageVisibility, setJoinMeetPageVisibility] = useState(false);
   const [userNameData, setUserNameData] = useState("")
+  // const [id, setId] = useState(""); 
   // const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,6 +93,10 @@ function App() {
       setTranslateJoinPage("translateX(0px)");
     }, 200);
   };
+  
+  const handleNavDisp = () => {
+    setNavbarDisp("flex");
+  }
 
   return (
     <Router>
@@ -113,10 +118,12 @@ function App() {
             path="/meet"
             element={
               <MeetPage
-                isLoggedIn={isLoggedIn}
+              isLoggedIn={isLoggedIn}
+                onSuccess={(successMessage) => handleSuccess(successMessage)}
                 onError={(errorMessage) => handleError(errorMessage)}
                 handleJoinPageVisibility={handleJoinPageVisibility}
                 sendUserNameData={sendUserNameData}
+                // setId={setId}
               />
             }
           />
@@ -146,13 +153,17 @@ function App() {
             }
           />
           <Route
-            path="/joinMeetPage"
+            path="/joinMeetPage/:action"
             element={
               joinMeetPageVisibility && (
                 <JoinMeetPage
+                  handleNavDisp = {handleNavDisp}
                   translateJoinPage={translateJoinPage}
+                  onSuccess={(successMessage) => handleSuccess(successMessage)}
+                  onError={(errorMessage) => handleError(errorMessage)}
                   isLoggedIn={isLoggedIn}
                   userNameData={userNameData}
+                  // id={id}
                 ></JoinMeetPage>
               )
             }
