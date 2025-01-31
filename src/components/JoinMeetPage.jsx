@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import { io } from "socket.io-client";
-import { getDatabase, ref, set, onValue, remove } from "firebase/database";
+import { getDatabase, ref, set, onValue, remove, get } from "firebase/database";
+// import UserChatBox from "./userChatBox";
 
 const AudioComponent = ({ isAudioOn }) => {
   const [audioStream, setAudioStream] = useState(null);
@@ -50,10 +51,12 @@ const JoinMeetPage = ({
   const [chatBoxTranslate, setChatBoxTranslate] = useState("translateX(400px)");
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
+  const [userInput, setUserInput] = useState("");
   const [socket, setSocket] = useState(null);
   const pathname = window.location.pathname;
   const segments = pathname.split("/");
   const dynamicRoute = segments[2];
+  // const chatBoxDispState = useRef(chatBoxDisp)
   const usersRef = useMemo(
     () => ref(db, `rooms/${dynamicRoute}`),
     [db, dynamicRoute]
@@ -95,63 +98,160 @@ const JoinMeetPage = ({
   };
 
   useEffect(() => {
+    // chatBoxDispState.current = chatBoxDisp;
     if (!socket) {
+      const playNotificationSound = (meetState) =>{
+        if(meetState === "join"){
+          const audio = new Audio("/userMeetJoinSound.wav"); 
+          audio.play().catch((err) => console.error("Audio play error:", err));
+        }if(meetState === "leave"){
+          const audio = new Audio("/userMeetLeaveSound.wav"); 
+          audio.play().catch((err) => console.error("Audio play error:", err));
+        }
+      }
       const newSocket = io("http://localhost:4001");
+      console.log(newSocket)
       setSocket(newSocket);
-
-      newSocket.on("connect", () => {
+  
+      newSocket.on("connect", async () => {
         console.log("Connected to socket server");
-
+  
         if (dynamicRoute === "new") {
-          setUserName(userNameData);
           newSocket.emit("create-room", async (roomId) => {
+            setUserName(userNameData);
             console.log("Room created:", roomId);
             const roomRef = ref(db, `rooms/${roomId}`);
             await set(roomRef, {
               users: { [newSocket.id]: userNameData },
             });
-
+  
             navigate(`/joinMeetPage/${roomId}`);
+            playNotificationSound("join");
             onSuccess("Room created successfully");
           });
         } else {
           const roomRef = ref(db, `rooms/${dynamicRoute}`);
-          onValue(roomRef, (snapshot) => {
-            if (snapshot.exists()) {
-              const userRef = ref(
-                db,
-                `rooms/${dynamicRoute}/users/${newSocket.id}`
-              );
-              set(userRef, userNameData);
-
-              newSocket.emit("user-connection-room", dynamicRoute, () => {
-                console.log("Joining room:", dynamicRoute);
-                onSuccess("Successfully connected to room");
-              });
-            } else {
-              onError("Room does not exist. Please check the Room ID.");
-            }
-          });
+          const snapshot = await get(roomRef);
+          playNotificationSound("join");
+          if (snapshot.exists()) {
+            const userRef = ref(db, `rooms/${dynamicRoute}/users/${newSocket.id}`);
+            await set(userRef, userNameData);
+  
+            newSocket.emit(
+              "user-connection-room",
+              { userRoomId: dynamicRoute, userName: userNameData },
+              () => {
+                setUserName(userNameData);
+                // console.log("Joining room:", dynamicRoute);
+                newSocket.on("user-has-connected", (currentUserName)=>{
+                  onSuccess(`User ${currentUserName} successfully connected to room`);
+                });
+              }
+            );
+          } else {
+            onError("Room does not exist. Please check the Room ID.");
+          }
         }
       });
 
-      newSocket.on("user-joined", () => {
-        setTimeout(() => {
-          onSuccess(`User ${userNameData} joined`);
-        }, 1000);
+  
+      let hasUserJoinedMessageShown = false;
+      newSocket.on("user-joined", (currentUserName) => {
+        if (!hasUserJoinedMessageShown) {
+          hasUserJoinedMessageShown = true;
+          setTimeout(() => {
+            playNotificationSound("join");
+            onSuccess(`User ${currentUserName} joined`);
+          }, 1000);
+        }
       });
+      
+      newSocket.on("user-message-receive", ({userMessage, roomUserName}) => {
+        setChatBoxDisp((prevChatBoxDisp) => {
+          if (prevChatBoxDisp !== "flex") {
+            onSuccess(`New message from ${roomUserName}`);
+            playNotificationSound();
+          }
+          return prevChatBoxDisp;
+        });
+
+        const playNotificationSound = () =>{
+          const audio = new Audio("/notificationSound.wav"); 
+          audio.play().catch((err) => console.error("Audio play error:", err));
+        }
+        // console.log("User message received", userMessage);
+        
+        const userChatBox = document.querySelector(".user-chat-box-container");
+        const userChatTimeContainer = document.createElement("div");
+        userChatTimeContainer.classList.add("user-chat-time-container");
+
+        const userMessageBox = document.createElement("div");
+        userMessageBox.classList.add("user-message-box");
+        userMessageBox.innerHTML = userMessage;
+        
+        const senderInfo = document.createElement("div");
+        senderInfo.classList.add("user-sender-name-time-stamp");
+        senderInfo.innerHTML = `${roomUserName} &nbsp;&nbsp; ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+        userChatTimeContainer.appendChild(userMessageBox);
+        userChatTimeContainer.appendChild(senderInfo);
+        
+        userChatBox.appendChild(userChatTimeContainer);
+        
+        // if(chatBoxDispState.current === "none"){
+        //   onSuccess(`New Notification form ${roomUserName}`);
+        // }
+      });
+      
+      newSocket.on("user-left", ()=>{
+        playNotificationSound("leave")
+        onError(`User ${userNameData} left the room`);
+      })
 
       newSocket.on("user-connection", (clientCount) => {
-        // onSuccess(`User connected with ID: ${clientCount}`);
-        console.log("User connected with ID:", clientCount/2);
+        console.log("User connected with ID:", clientCount / 2);
       });
-
+  
       return () => {
         newSocket.disconnect();
         console.log("Socket disconnected");
       };
     }
   }, []);
+
+  const addMessageBox = () => {
+    if (userInput.trim()) {
+      socket.emit("user-message-send", {
+        userRoomId: dynamicRoute,
+        userMessage: userInput,
+        roomUserName: userNameData,
+        userMessageTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      });
+
+      const userChatBox = document.querySelector(".user-chat-box-container");
+      const userChatTimeContainer = document.createElement("div");
+      userChatTimeContainer.classList.add("user-chat-time-container");
+
+      const userMessageBox = document.createElement("div");
+      userMessageBox.classList.add("user-message-box");
+      userMessageBox.innerHTML = userInput;
+
+      const senderInfo = document.createElement("div");
+      senderInfo.classList.add("user-sender-name-time-stamp");
+      senderInfo.innerHTML = `${userNameData} &nbsp;&nbsp; ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+      userChatTimeContainer.appendChild(userMessageBox);
+      userChatTimeContainer.appendChild(senderInfo);
+      
+      userChatBox.appendChild(userChatTimeContainer);
+
+      setUserInput("");
+    }
+    // if(chatBoxDisp === "none"){
+    //   onSuccess("New Notification")
+    // }
+  };
+  
 
   useEffect(() => {
     onValue(usersRef, (snapshot) => {
@@ -171,7 +271,13 @@ const JoinMeetPage = ({
   }, [usersRef]);
 
   const leaveMeeting = () => {
-    const userRef = ref(db, `rooms/${dynamicRoute}/users/${userNameData}`);
+    const playNotificationSound = () =>{
+      const audio = new Audio("/userMeetLeaveSound.wav"); 
+      audio.play().catch((err) => console.error("Audio play error:", err));
+    }
+    console.log("dynamic leaving", dynamicRoute);
+    console.log("dynamic leaving socket", socket.id);
+    const userRef = ref(db, `rooms/${dynamicRoute}/users/${socket.id}`);
     console.log("User Reference: ", userRef);
     remove(userRef)
       .then(() => {
@@ -182,6 +288,7 @@ const JoinMeetPage = ({
         console.log("User removed from database");
         navigate("/meet");
         handleNavDisp();
+        playNotificationSound();
         onError(`User ${userNameData} left the room.`);
         socket.disconnect();
       })
@@ -310,8 +417,43 @@ const JoinMeetPage = ({
         <div
           className="join-meet-page-chat-area"
           style={{ display: chatBoxDisp, transform: chatBoxTranslate }}
-        >
-          Hello Brother
+        >   
+        <div className="user-chat-input-box-wrapper">
+          <div className="user-chat-box-container">
+            {/* <div className="user-chat-time-container">
+              <div className="user-message-box">
+                lorem
+              </div>
+              <div className="user-sender-name-time-stamp">
+                Priyanshu &nbsp;&nbsp; 12:00 PM
+              </div>
+            </div> 
+            the above are is used for the chat purpose
+            */}
+          </div>
+          <div className="user-chat-input-box">
+            <input
+              className="user-input"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addMessageBox();
+              }}
+              type="text"
+            />
+            <button className="user-message-send-button" onClick={addMessageBox}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="30px"
+                viewBox="0 -960 960 960"
+                width="30px"
+                fill="#FFFFFF"
+              >
+                <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
         </div>
       </div>
     </div>

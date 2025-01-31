@@ -51,7 +51,7 @@ function App() {
     setFillUp("blur(0px)");
     toast.success(message, {
       position: "bottom-right",
-      autoClose: 3000,
+      autoClose: 1500,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -65,7 +65,7 @@ function App() {
   const handleError = (message) => {
     toast.error(message, {
       position: "bottom-right",
-      autoClose: 2000,
+      autoClose: 1500,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
