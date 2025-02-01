@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../logo/video-calling-app.png";
+import { io } from "socket.io-client";
 
-export default function landingPageComponent() {
+export default function LandingPageComponent() {
+  const [socket, setSocket] = useState(null);
+
+  useEffect(()=>{
+    if(!socket){
+      const newSocket = io("https://vi-meet-backend.onrender.com");
+      setSocket(newSocket);
+      newSocket.emit("server-cold-start", "Server is up running");
+      newSocket.on("server-started", (message)=>{
+        console.log(message);
+      })
+    }
+    
+    return () => {
+      if(socket){
+        socket.disconnect();
+      }
+    }
+
+  },[])
+
   return (
     <div className="landing-home-page">
       <div className="landing-page-content-part">

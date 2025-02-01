@@ -109,7 +109,7 @@ const JoinMeetPage = ({
           audio.play().catch((err) => console.error("Audio play error:", err));
         }
       }
-      const newSocket = io("http://localhost:4001");
+      const newSocket = io("https://vi-meet-backend.onrender.com");
       console.log(newSocket)
       setSocket(newSocket);
   
