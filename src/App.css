@@ -596,7 +596,7 @@ input::placeholder{
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    height: 100%;
+    height: 800px;
     width: 50%;
     padding-top: 100px;
     flex-direction: column;
@@ -672,12 +672,12 @@ input::placeholder{
 }
 .meet-page-info-side-page-meet-code-join{
     height: 10%;
-    width: 80%;
+    width: 85%;
     /* background-color: blueviolet; */
     display:flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-end;
-    padding-right: 25px;
+    padding-right: 39px;
     gap: 10px;
 }
 .meet-page-info-side-page-meet-code-join>input{
@@ -878,8 +878,8 @@ input::placeholder{
 }
 
 .join-meet-page-acouunt-own-holder-profile-picture{
-    height: 120px;
-    width: 120px;
+    height: 100px;
+    width: 100px;
     border-radius: 50%;
     background-color: #161256;
     display: flex;
@@ -906,6 +906,16 @@ input::placeholder{
     gap: 30px;
 }
 
+.join-meet-page-optionbar-area-individual{
+    height: 70px;
+    width: 190px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    align-items: center;
+}
+
 .join-meet-page-account-video{
     /* place-self: center; */
     /* grid-column: 1 / -1; 
@@ -930,7 +940,7 @@ input::placeholder{
 }
 
 .join-meet-page-account-own-video{
-    height: 200px;
+    height: 230px;
     width: 345px;
     background-color: rgb(49, 61, 112);
     border-radius: 20px;
@@ -941,6 +951,7 @@ input::placeholder{
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
     flex-direction: column;
     transition: 0.3s ease-in-out;
     overflow: hidden;
@@ -1097,10 +1108,38 @@ input::placeholder{
     /* padding: 10px; */
 }
 
+.join-meet-page-optionbar-area-individual-outside{
+    display: absolute;
+    position: fixed;
+    height: 60px;
+    width: 100%;
+    top: 170px;
+    /* background-color: aqua; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 200px;
+    flex-direction: row;
+
+}
+
 
 .join-meet-page-optionbar-video-button,
-.join-meet-page-optionbar-chat-button,
 .join-meet-page-optionbar-audio-button{
+    display: absolute;
+    height: 60px;
+    width: 60px;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+.join-meet-page-optionbar-chat-button{
     height: 80%;
     width: 57px;
     border: none;
@@ -1111,6 +1150,7 @@ input::placeholder{
     justify-content: center;
     border: 2px solid white;
     cursor: pointer;
+
 }
 
 .join-meet-page-optionbar-leave-button{

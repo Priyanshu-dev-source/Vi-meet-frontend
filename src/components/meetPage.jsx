@@ -96,6 +96,7 @@ export default function MeetPage({
   useEffect(() => {
     if (isLoggedIn) {
       const storedUserName = sessionStorage.getItem("username");
+      console.log("Stored username:", storedUserName);
       setUserName(storedUserName || "");
     }
   }, [isLoggedIn]);

@@ -1,8 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
-import { auth } from '../services/firebase'
+// import { signOut } from 'firebase/auth';
+// import { auth } from '../services/firebase'
 
 const Profile = ({ isLoggedIn, setIsLoggedIn, onSuccess }) => {
   const [userName, setUserName] = useState("");
