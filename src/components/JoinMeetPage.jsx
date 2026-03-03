@@ -60,18 +60,35 @@ const JoinMeetPage = ({
   const [remoteStreams, setRemoteStreams] = useState({}); // { [socketId]: MediaStream }
   const remoteStreamsRef = useRef({});
   const sendersRef = useRef({}); // { [peerId]: { audio: RTCRtpSender|null, video: RTCRtpSender|null } }
-  // ICE servers fetched dynamically from our server's /api/turn-credentials endpoint
-  const [iceServers, setIceServers] = useState([
-    // Fallback STUN servers (used until dynamic credentials are fetched)
-    { urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"] },
-    { urls: ["stun:global.stun.twilio.com:3478"] },
-  ]);
-
   const rtcConfig = useMemo(() => ({
     bundlePolicy: 'max-bundle',
     iceCandidatePoolSize: 2,
-    iceServers: iceServers,
-  }), [iceServers]);
+    iceServers: [
+      {
+        urls: "stun:stun.relay.metered.ca:80",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80",
+        username: "32d1831f7fb68465978ef471",
+        credential: "fTOLiB849z/qS3MA",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80?transport=tcp",
+        username: "32d1831f7fb68465978ef471",
+        credential: "fTOLiB849z/qS3MA",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:443",
+        username: "32d1831f7fb68465978ef471",
+        credential: "fTOLiB849z/qS3MA",
+      },
+      {
+        urls: "turns:global.relay.metered.ca:443?transport=tcp",
+        username: "32d1831f7fb68465978ef471",
+        credential: "fTOLiB849z/qS3MA",
+      },
+    ],
+  }), []);
   
   const pathname = window.location.pathname;
   const segments = pathname.split("/");
@@ -378,10 +395,7 @@ const JoinMeetPage = ({
         }
       };
       const serverUrl = import.meta.env.VITE_SERVER_URL || window.location.origin;
-      const newSocket = io(serverUrl, {
-        transports: ["websocket"],
-        withCredentials: true,
-      });
+      const newSocket = io(serverUrl);
       console.log("ye naya socket hai ", newSocket);
       setSocket(newSocket);
 

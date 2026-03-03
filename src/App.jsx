@@ -6,7 +6,7 @@ import LandingPage from './components/landingPage'
 import MeetPage from './components/meetPage'
 import SignUpAuth from './components/signUpAuth'
 import LoginAuth from './components/loginAuth'
-import JoinMeetPage from './components/joinMeetPage'
+import JoinMeetPage from './components/JoinMeetPage'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
